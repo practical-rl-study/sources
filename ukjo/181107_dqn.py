@@ -22,18 +22,17 @@ from keras import optimizers
 env = gym.make('CartPole-v0')
 
 n_action = env.action_space.n
-n_observation = env.observation_space.n
+n_observation = env.observation_space.shape[0]
 
 D = deque(maxlen=1000000)
 
 
 a = Input((n_observation,))
-h = Dense(40)(a)
+h = Dense(30, activation='relu')(a)
+h = Dense(30, activation='relu')(h)
 b = Dense(n_action)(h)
 Q = Model(inputs=a, outputs=b) # Q
-rmsprop = optimizers.rmsprop(lr=0.00025, decay=1e-6, momentum=0.95)
-
-Q.compile(optimizer=rmsprop, loss='mse', metrics=['accuracy'])
+Q.compile(optimizer=optimizers.rmsprop(lr=0.00025), loss='mse', metrics=['accuracy'])
 
 Q_hat = clone_model(Q)
 M = 500
@@ -46,6 +45,7 @@ decay_rate = (start_epsilon - end_epsilon) / decay_duration
 batch_size = 32
 discounted_factor = 0.99
 total_step = 0
+render = False
 
 """
 env
@@ -56,54 +56,66 @@ env
  render : 눈에 보이기에!!
 """
 
+
+def optimize():
+    """
+    update network
+    """
+
+    if len(D) < batch_size:
+        pass
+    else:
+        # D size is bigger than batch_size
+        sample_batch = random.sample(D, batch_size)
+
+        for s, a, r, ns, d in sample_batch:
+            target_action_value = None
+            if d:
+                y = r
+                target_action_value = Q.predict(np.expand_dims(s, axis=0))
+                target_action_value[0][a] = y
+            else:
+                target_action_value = Q_hat.predict(np.expand_dims(ns, axis=0), batch_size=1, verbose=0)  # [batch_size][action_space_n]
+                y = r + discounted_factor * np.max(target_action_value[0])
+                target_action_value[0][a] = y
+
+            Q.fit(np.expand_dims(s, axis=0), target_action_value, epochs=1, verbose=0)
+
+
 # episode loop
-for _ in range(M): # loop until 500
+for e in range(M):  # loop until 500
 
     """episode start"""
     o = env.reset()
 
-
+    R = 0
     # inside episode
     for step in range(200):
 
-
         total_step += 1
+
         # epsilon greedy
         a = np.random.rand()
 
-        if  step < 10 or a < epsilon:
+        if step < 10 or a < max(end_epsilon, epsilon * (total_step * decay_rate)):
             action = env.action_space.sample()
         else:
-            action = np.argmax(Q.predict(o))
+            action = np.argmax(Q.predict(np.expand_dims(o, axis=0)))
 
-        env.render()
+        if render:
+            env.render()
 
         next_o, r, d, _ = env.step(action)
 
         D.append([o, action, r, next_o, d])
 
+        R += r
         o = next_o
+        optimize()
 
-        """
-        update network
-        """
-        if len(D) < batch_size:
-            pass
-        else: # D size is bigger than batch_size
-            sample_batch = random.sample(D, batch_size)
-
-            for s, a, r, ns, d in sample_batch:
-                if d:
-                    y = r
-                else:
-                    target_action_value = Q_hat.predict(s, batch_size=1) # [batch_size][action_space_n]
-                    y = r + discounted_factor * np.max(target_action_value[0])
-
-                target_action_value[0][a] = y
-
-                Q.fit(s, target_action_value,  epochs=1)
         if d:
+            print('{} episode reward : {}'.format(e, R))
             break
 
-        if total_step % 10000 == 0: # every C steps, where C = 10000
-            Q_hat.save_weights(Q.get_weights())
+    if e % 1000 == 0: # every C steps, where C = 10000
+        Q_hat.set_weights(Q.get_weights())
