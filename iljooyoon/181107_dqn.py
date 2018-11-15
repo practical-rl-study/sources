@@ -29,73 +29,83 @@ env
 env = gym.make('CartPole-v0')
 D = deque(maxlen=1000000)
 
-n_observation = env.observation_space.shape
+n_observation = env.observation_space.shape[0]
 n_action = env.action_space.n
 
-print(n_observation, n_action)
+input_layer = Input((n_observation,))
+h = Dense(100, activation='relu')(input_layer)
+h = Dense(100, activation='relu')(h)
+h = Dense(100, activation='relu')(h)
+output_layer = Dense(n_action, activation='linear')(h)
 
-a = Input(n_observation)
-h = Dense(40)(a)
-b = Dense(n_action)(h)
-
-Q = Model(inputs=a, outputs=b)
-rmsprop = optimizers.rmsprop(lr=0.00025, decay=1e-6, momentum=0.95)
-Q.compile(optimizer=rmsprop, loss='mean_squared_error', metrics=['accuracy'])
+Q = Model(inputs=input_layer, outputs=output_layer)
+Q.compile(optimizer='rmsprop', loss='mse')
 Q_hat = clone_model(Q)
 M = 500
 
 start_epsilon = 1.0
-end_epsilon = 0.1
-decay_duration = 1000000
+end_epsilon = 0.01
+decay_duration = 3000
 decay_rate = (start_epsilon - end_epsilon) / decay_duration
 discounted_factor = 0.99
+epsilon = start_epsilon
 
 batch_size = 32
 total_step = 0
+render = False
 
 for e_num in range(M):
-    o = env.reset()
-    epsilon = start_epsilon - decay_rate * e_num
+    state = env.reset()
+    step = 0
+    done = False
+    while not done:
+        if render:
+            env.render()
 
-    for _ in range(200):
-        env.render()
-
-        a = np.random.rand()
-        if a > epsilon:
+        if np.random.rand() < epsilon:
             action = env.action_space.sample()
         else:
-            action = np.argmax(Q.predict(o))
+            action = np.argmax(Q.predict(np.reshape(state, [1, n_observation])))
 
-        next_o, r, d, _ = env.step(action)
+        epsilon = max(epsilon - decay_rate, end_epsilon)
 
-        D.append([o, action, r, next_o, d])
+        next_state, reward, done, _ = env.step(action)
+        step += 1
+        D.append([state, action, reward, next_state, done, step])
 
         total_step += 1
-        o = next_o
+        state = next_state
 
         """
         update network
         """
+        if total_step % 80 == 0 and len(D) > batch_size:
+            for _ in range(5):
+                sample_batch = random.sample(D, batch_size)
+                s_stack, y_stack = [], []
 
-        if len(D) < batch_size:
-            pass
-        else:
-            sample_batch = random.sample(D, batch_size)
+                for s, a, r, ns, d, st in sample_batch:
+                    if d and step < 200:
+                        y = -100
+                    elif d and step == 200:
+                        continue
+                    else:
+                        Q2 = Q_hat.predict(np.reshape(ns, [1, n_observation]))[0]
+                        y = r + discounted_factor * np.max(Q2)
 
-        for s, a, r, ns, d in sample_batch:
-            if d:
-                y = r
+                    target_action_value = Q.predict(np.reshape(s, [1, n_observation]))
+                    target_action_value[0][a] = y
+                    s_stack.append(s)
+                    y_stack.append(target_action_value[0])
+
+                Q.fit(np.array(s_stack), np.array(y_stack), epochs=1, verbose=0)
+
+            Q_hat.set_weights(Q.get_weights())
+
+        if done:
+            print(e_num, 'finished.', 'epsilon : ', epsilon, 'step : ', step)
+            if step > 100:
+                render = True
             else:
-                target_action_value = Q_hat.predict(s)[0]
-                y = r + discounted_factor * np.max(target_action_value)
+                render = False
 
-            target_action_value[0][a] = y
-
-            Q.fit(s, target_action_value, epochs=1)
-
-        if d:
-            print(e_num, 'finished.', 'epsilon : ', epsilon)
-            break
-
-        if total_step % 10000 == 0:
-            Q_hat.save_weights(Q.get_weights())
