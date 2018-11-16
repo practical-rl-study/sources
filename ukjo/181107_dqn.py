@@ -23,18 +23,8 @@ env = gym.make('CartPole-v0')
 
 n_action = env.action_space.n
 n_observation = env.observation_space.shape[0]
+n_max_step = env._max_episode_steps
 
-D = deque(maxlen=1000000)
-
-
-a = Input((n_observation,))
-h = Dense(30, activation='relu')(a)
-h = Dense(30, activation='relu')(h)
-b = Dense(n_action)(h)
-Q = Model(inputs=a, outputs=b) # Q
-Q.compile(optimizer=optimizers.rmsprop(lr=0.00025), loss='mse', metrics=['accuracy'])
-
-Q_hat = clone_model(Q)
 M = 500
 
 start_epsilon = 1.0
@@ -46,6 +36,22 @@ batch_size = 32
 discounted_factor = 0.99
 total_step = 0
 render = False
+learning_rate = 0.001
+
+
+D = deque(maxlen=1000000)
+
+a = Input((n_observation,))
+h = Dense(24, activation='relu')(a)
+h = Dense(24, activation='relu')(h)
+b = Dense(n_action, activation='linear')(h)
+Q = Model(inputs=a, outputs=b) # Q
+# Q.compile(optimizer=optimizers.rmsprop(lr=0.00025), loss='mse', metrics=['accuracy'])
+
+Q.compile(loss='mse',optimizer=optimizers.Adam(lr=learning_rate))
+
+Q_hat = clone_model(Q)
+Q_hat.set_weights(Q.get_weights())
 
 """
 env
@@ -96,8 +102,8 @@ for e in range(M):  # loop until 500
 
         # epsilon greedy
         a = np.random.rand()
-
-        if step < 10 or a < max(end_epsilon, epsilon * (total_step * decay_rate)):
+        epsilon = epsilon - (total_step * decay_rate)
+        if step < 10 or a < max(end_epsilon, epsilon):
             action = env.action_space.sample()
         else:
             action = np.argmax(Q.predict(np.expand_dims(o, axis=0)))
@@ -107,6 +113,9 @@ for e in range(M):  # loop until 500
 
         next_o, r, d, _ = env.step(action)
 
+        if d and step < n_max_step-1:
+            r = -100
+
         D.append([o, action, r, next_o, d])
 
         R += r
@@ -114,8 +123,10 @@ for e in range(M):  # loop until 500
         optimize()
 
         if d:
-            print('{} episode reward : {}'.format(e, R))
+            if step < n_max_step-1:
+                R += 100
+            print('{} episode return : {}'.format(e, R))
             break
 
-    if e % 1000 == 0: # every C steps, where C = 10000
+    if e % 5 == 0: # every C steps, where C = 10000
         Q_hat.set_weights(Q.get_weights())
