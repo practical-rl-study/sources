@@ -9,8 +9,8 @@ import random
 
 env = gym.make("CartPole-v0")
 
-n_action = env.action_space
-n_observation = env.observation_space
+n_action = env.action_space.n
+n_observation = env.observation_space.shape[0]
 
 a = Input(shape=(4,))
 h = Dense(40)(a)
@@ -40,16 +40,14 @@ for _ in range(M):
 
     for step in range(200):
         total_step = total_step + 1
-        a = np.random.rand()
 
-        if a < epsilon:
-            action = env.observation_space.sample()
-            epsilon = epsilon * decay_rate
+        if np.random.rand() < epsilon:
+            action = env.action_space.sample()
         else:
-            action = np.argmax(Q.predict(o))
+            action = np.argmax(Q.predict(np.array([o])))
 
+        epsilon = max(epsilon-decay_rate, end_epsilon)
         env.render()
-
         next_o, r, d, _ = env.step(action)
 
         D.append([o, action, r, next_o, d])
@@ -60,15 +58,23 @@ for _ in range(M):
             pass
         else:
             sample_batch = random.sample(D, batch_size)
+
+            s_stack=[]
+            y_stack=[]
             for s, a, r, ns, d in sample_batch:
+
+                action_value = Q.predict(np.array([s]))
+
                 if d:
                     y = r
                 else:
-                    target_action_value = Q_hat.predict(s, batch_size=1)
+                    target_action_value = Q_hat.predict(np.array([ns]), batch_size=1)
                     y = r + discount_factor * np.max(target_action_value[0])
 
-                target_action_value[0][a] = y
-                Q.fit(s, target_action_value, epochs=1)
+                action_value[0][a] = y
+                s_stack.append(s)
+                y_stack.append(action_value)
+                Q.fit(np.array(s_stack), np.array(y_stack), epochs=1)
 
         if total_step % 10000 == 0:
             Q_hat.save_weights(Q.get_weights())
