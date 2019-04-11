@@ -7,9 +7,13 @@ import numpy as np
 from keras.layers import Dense
 from keras.models import Model, Input
 
-GAMMA = 0.3
-discounted_factor = 1
+GAMMA = 0.99
 
+env = gym.make('CartPole-v0')
+OBS_SPACE = env.observation_space.shape[0]
+ACTION_SPACE = env.action_space.n
+
+EPISODE = 10000
 
 class REINFORCEMENTAgent:
     def __init__(self, model):
@@ -38,10 +42,10 @@ class REINFORCEMENTAgent:
         returns = list(reversed(gt))
         actions_return = np.zeros(shape=(len(self.states),ACTION_SPACE))
 
-        for i, g_i in enumerate(range(len(self.states))):
+        for i in range(len(self.states)):
             actions_return[i][self.actions[i]] = returns[i]
 
-        self.model.fit(x=np.asanyarray(self.states), y=actions_return, batch_size=64, epochs=1)
+        self.model.fit(x=np.array(self.states), y=actions_return, batch_size=32, epochs=1)
 
     def append_sample(self, state, action, reward):
         self.states.append(state)
@@ -51,21 +55,14 @@ class REINFORCEMENTAgent:
     def compile(self, optimizer='adam', loss='categorical_crossentropy'):
         self.model.compile(optimizer=optimizer, loss=loss)
 
-
 def build_network():
     i = Input(shape=(OBS_SPACE,))
-    h = Dense(2, activation='relu')(i)
-    h = Dense(2, activation='relu')(h)
+    h = Dense(4, activation='relu')(i)
+    h = Dense(8, activation='relu')(h)
     o = Dense(ACTION_SPACE, activation='softmax')(h)
 
     return Model(inputs=[i], outputs=[o])
 
-
-env = gym.make('CartPole-v0')
-OBS_SPACE = env.observation_space.shape[0]
-ACTION_SPACE = env.action_space.n
-
-EPISODE = 1000
 
 model = build_network()
 agent = REINFORCEMENTAgent(model)
@@ -84,4 +81,7 @@ for e in range(EPISODE):
         s = ns
         step += 1
         if d:
+            print('train~! e=', e+1, 'step=', step)
+            r = 100
             agent.train()
+
