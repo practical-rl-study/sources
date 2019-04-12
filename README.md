@@ -1,6 +1,22 @@
 # sources
 source codes
 
+## Contributors
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+<table><tr>
+  <td align="center"><a href="https://github.com/verystrongjoe"><img src="https://avatars3.githubusercontent.com/u/14961526?v=4" width="100px;" alt="Uk Jo (Arnold)"/><br /><sub><b>Uk Jo (Arnold)</b></sub></a><br /><a href="https://github.com/practical-rl-study/sources/commits?author=verystrongjoe" title="Code">💻</a></td>
+    
+  </tr></table>
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+
+
 
 ## Installation
 - [OpenAI gym](https://gym.openai.com/) 으로 놀아보기
