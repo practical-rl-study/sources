@@ -8,7 +8,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore -->
 <table><tr>
-  <td align="center"><a href="https://github.com/verystrongjoe"><img src="https://avatars3.githubusercontent.com/u/14961526?v=4" width="100px;" alt="Uk Jo (Arnold)"/><br /><sub><b>Uk Jo (Arnold)</b></sub></a><br /><a href="https://github.com/practical-rl-study/sources/commits?author=verystrongjoe" title="Code">💻</a></td>
+  <td align="center"><a href="https://github.com/verystrongjoe"><img src="https://avatars0.githubusercontent.com/u/1635593?s=460&v=4" width="100px;" alt="Uk Jo (Arnold)"/><br /><sub><b>Uk Jo (Arnold)</b></sub></a><br /><a href="https://github.com/practical-rl-study/sources/commits?author=verystrongjoe" title="Code">💻</a></td>
     
   </tr></table>
 
