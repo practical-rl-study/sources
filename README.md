@@ -9,7 +9,14 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- prettier-ignore -->
 <table><tr>
   <td align="center"><a href="https://github.com/verystrongjoe"><img src="https://avatars0.githubusercontent.com/u/1635593?s=460&v=4" width="100px;" alt="Uk Jo (Arnold)"/><br /><sub><b>Uk Jo (Arnold)</b></sub></a><br /><a href="https://github.com/practical-rl-study/sources/commits?author=verystrongjoe" title="Code">💻</a></td>
-    
+ 
+  <td align="center"><a href="https://github.com/verystrongjoe"><img src="https://avatars0.githubusercontent.com/u/1635593?s=460&v=4" width="100px;" alt="Uk Jo (Arnold)"/><br /><sub><b>Uk Jo (Arnold)</b></sub></a><br /><a href="https://github.com/practical-rl-study/sources/commits?author=verystrongjoe" title="Code">💻</a></td>
+ 
+ 
+  <td align="center"><a href="https://github.com/verystrongjoe"><img src="https://avatars0.githubusercontent.com/u/1635593?s=460&v=4" width="100px;" alt="Uk Jo (Arnold)"/><br /><sub><b>Uk Jo (Arnold)</b></sub></a><br /><a href="https://github.com/practical-rl-study/sources/commits?author=verystrongjoe" title="Code">💻</a></td>
+ 
+ 
+ 
   </tr></table>
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
