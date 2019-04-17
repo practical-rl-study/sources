@@ -10,7 +10,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table><tr>
   <td align="center"><a href="https://github.com/verystrongjoe"><img src="https://avatars0.githubusercontent.com/u/1635593?s=460&v=4" width="100px;" alt="Uk Jo (Arnold)"/><br /><sub><b>Uk Jo (Arnold)</b></sub></a><br /><a href="https://github.com/practical-rl-study/sources/commits?author=verystrongjoe" title="Code">💻</a></td>
  
-  <td align="center"><a href="https://github.com/pisee"><img src="https://avatars2.githubusercontent.com/u/3126047?s=400&u=c73a13de0715e312b624282763cd2b68e0947c8b&v=4" width="100px;" alt="dongseok Lee (doni)"/><br /><sub><b>Uk Jo (Arnold)</b></sub></a><br /><a href="https://github.com/practical-rl-study/sources/commits?author=pisee" title="Code">💻</a></td>
+  <td align="center"><a href="https://github.com/pisee"><img src="https://avatars2.githubusercontent.com/u/3126047?s=400&u=c73a13de0715e312b624282763cd2b68e0947c8b&v=4" width="100px;" alt="dongseok Lee (doni)"/><br /><sub><b>dongseok Lee (doni)</b></sub></a><br /><a href="https://github.com/practical-rl-study/sources/commits?author=pisee" title="Code">💻</a></td>
  
  
   <td align="center"><a href="https://github.com/verystrongjoe"><img src="https://avatars0.githubusercontent.com/u/1635593?s=460&v=4" width="100px;" alt="Uk Jo (Arnold)"/><br /><sub><b>Uk Jo (Arnold)</b></sub></a><br /><a href="https://github.com/practical-rl-study/sources/commits?author=verystrongjoe" title="Code">💻</a></td>
