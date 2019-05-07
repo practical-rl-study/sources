@@ -13,7 +13,7 @@ env = gym.make('CartPole-v0')
 OBS_SPACE = env.observation_space.shape[0]
 ACTION_SPACE = env.action_space.n
 
-EPISODE = 10000
+EPISODE = 3000
 
 class REINFORCEMENTAgent:
     def __init__(self, model):
@@ -67,6 +67,7 @@ def build_network():
 model = build_network()
 agent = REINFORCEMENTAgent(model)
 agent.compile()
+success_count = 0
 for e in range(EPISODE):
 
     s = env.reset()
@@ -77,11 +78,14 @@ for e in range(EPISODE):
         # env.render()
         a = agent.select_action(s)
         ns, r, d, _ = env.step(a)
+        step += 1
+        if d and step == 200:
+            success_count += 1
+            r = 100
         agent.append_sample(s,a,r)
         s = ns
-        step += 1
         if d:
-            print('train~! e=', e+1, 'step=', step)
-            r = 100
+            print('e=', e+1, 'step=', step)
             agent.train()
 
+print('success_count = ', success_count)

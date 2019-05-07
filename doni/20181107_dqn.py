@@ -33,7 +33,7 @@ decay_rate = (start_epsilon - end_epsilon)/decay_duration
 batch_size = 32
 discount_factor = 0.99
 
-total_step = 0;
+total_step = 0
 
 for _ in range(M):
     o = env.reset()
