@@ -57,7 +57,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 - Could not find a version that satisfies the requirement.... 설치 오류  
   - pip 업그레이드 실시
   ```python
-  pip install --upgrade pip
+  python -m pip install --upgrade pip 
   ```
 
 - tensorflow 설치 오류
