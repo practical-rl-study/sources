@@ -28,7 +28,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 ## Installation
 - [OpenAI gym](https://gym.openai.com/) 으로 놀아보기
 ```python
-pip install -r requirement.txt
+pip install -r requirements.txt
 ```
 - Quick start  
 ```python
