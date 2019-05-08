@@ -27,23 +27,25 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 ## Installation
 - [OpenAI gym](https://gym.openai.com/) 으로 놀아보기
-```python
-pip install -r requirements.txt
-```
-- Quick start  
-```python
-import gym
-env = gym.make("CartPole-v1")
-observation = env.reset()
-for _ in range(1000):
-  env.render()
-  action = env.action_space.sample() # your agent here (this takes random actions)
-  observation, reward, done, info = env.step(action)
+  - python 3.6 버전 설치(Window OS경우, 2019.05월 현재)  
+  - 라이브러리 설치
+  ```python
+  pip install -r requirements.txt
+  ```
+  - Quick start  
+  ```python
+  import gym
+  env = gym.make("CartPole-v1")
+  observation = env.reset()
+  for _ in range(1000):
+    env.render()
+    action = env.action_space.sample() # your agent here (this takes random actions)
+    observation, reward, done, info = env.step(action)
 
-  if done:
-    observation = env.reset()
-env.close()
-```
+    if done:
+      observation = env.reset()
+  env.close()
+  ```
 
 ## Troubleshooting
 - msvcp140.dll 에러
@@ -52,6 +54,20 @@ env.close()
     ```
     - [Visual Studio 2015용 Visual C++ 재배포 가능 패키지](https://www.microsoft.com/ko-kr/download/details.aspx?id=48145) 설치
 
+- Could not find a version that satisfies the requirement.... 설치 오류  
+  - pip 업그레이드 실시
+  ```python
+  pip install --upgrade pip
+  ```
+
+- tensorflow 설치 오류
+  ```python
+      100% |████████████████████████████████| 3.2MB 877kB/s
+  Collecting tensorflow==1.13.1 (from -r requirements.txt (line 25))
+    Could not find a version that satisfies the requirement tensorflow==1.13.1 (from -r requirements.txt (line 25)) (from versions: )
+  No matching distribution found for tensorflow==1.13.1 (from -r requirements.txt (line 25))
+  ```
+  - python 3.6 버전 설치권장
 - atari-py window 설치 오류
     ```python
     $ pip install atari_py
